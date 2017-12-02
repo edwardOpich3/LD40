@@ -99,10 +99,5 @@ public class PizzaBehavior : MonoBehaviour
 		{
 			toppings[(int)TOPPINGS.ONIONS].SetActive(true);
 		}
-
-		if(isSliding)
-		{
-			pizzaRB.AddForce((-pizzaRB.velocity * pizzaRB.mass) / (Time.deltaTime * 50.0f));
-		}
 	}
 }
