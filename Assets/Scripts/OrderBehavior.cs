@@ -36,30 +36,46 @@ public class OrderBehavior : MonoBehaviour
 		{
 			toppings.text += "- Cheese\n";
 		}
+
+		bool hasToppings = false;
+
 		if(orderedToppings[(int)TOPPINGS.PEPPERONI])
 		{
 			toppings.text += "'Roni\n";
+			hasToppings = true;
 		}
 		if(orderedToppings[(int)TOPPINGS.ANCHOVIES])
 		{
 			toppings.text += "'Chovies\n";
+			hasToppings = true;
 		}
 		if(orderedToppings[(int)TOPPINGS.MUSHROOMS])
 		{
 			toppings.text += "Mush.\n";
+			hasToppings = true;
 		}
 		if(orderedToppings[(int)TOPPINGS.PEPPERS])
 		{
 			toppings.text += "Pep.\n";
+			hasToppings = true;
 		}
 		if(orderedToppings[(int)TOPPINGS.ONIONS])
 		{
 			toppings.text += "On.\n";
+			hasToppings = true;
 		}
 
-		if(toppings.text == "")
+		if(!hasToppings)
 		{
-			toppings.text = "Plain";
+			toppings.text = "Plain\n";
+			if(!orderedToppings[(int)TOPPINGS.SAUCE])
+			{
+				toppings.text += "- Sauce\n";
+			}
+			if(!orderedToppings[(int)TOPPINGS.CHEESE])
+			{
+				toppings.text += "- Cheese\n";
+			}
 		}
 
 		transform.position = new Vector3(4.3f, -2.5f, 0.0f);

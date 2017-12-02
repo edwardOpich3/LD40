@@ -16,6 +16,9 @@ public class GameBehavior : MonoBehaviour
 	private float timeLeft;			// Time left in the day, in seconds
 	private int pizzasServed;
 	public Text uiText;
+	public Text mistakeText;
+
+	bool gameStarted;
 
 	private GameObject curPizza;
 	private PizzaBehavior curPizzaBehavior;
@@ -26,6 +29,8 @@ public class GameBehavior : MonoBehaviour
 	void Start ()
 	{
 		DontDestroyOnLoad(gameObject);
+
+		gameStarted = false;
 
 		orderedToppings = new bool[8];
 		for(uint i = 1; i < orderedToppings.Length; i++)
@@ -43,6 +48,8 @@ public class GameBehavior : MonoBehaviour
 		uiText.text += "Order Time: " + string.Format("{0}:{1:00}", (int)orderTime / 60, (int)orderTime % 60) + "\n";
 		uiText.text += "Time Left: " + string.Format("{0}:{1:00}", (int)timeLeft / 60, (int)timeLeft % 60) + "\n";
 
+		mistakeText.text = "Press Up Arrow to start!";
+
 		curPizza = Instantiate(pizzaPF);
 		curPizza.name = "Pizza";
 		curPizzaBehavior = curPizza.GetComponent<PizzaBehavior>();
@@ -56,8 +63,14 @@ public class GameBehavior : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		if(Input.GetKeyDown(KeyCode.UpArrow))
+		{
+			mistakeText.text = "";
+			gameStarted = true;
+		}
+
 		Scene currentScene = SceneManager.GetActiveScene();
-		if(currentScene.name == "Gameplay")
+		if(currentScene.name == "Gameplay" && gameStarted)
 		{
 			orderTime += Time.deltaTime;
 			timeLeft -= Time.deltaTime;
@@ -73,7 +86,11 @@ public class GameBehavior : MonoBehaviour
 				// You sent the order
 				if(Camera.main.WorldToViewportPoint(new Vector2(curPizza.transform.position.x - 1.28f, 0.0f)).x > 1.0f)
 				{
+					mistakeText.text = "";
+
 					bool messedUp = false;
+					bool forgotToppings = false;
+					bool wrongToppings = false;
 					for(int i = 0; i < 8; i++)
 					{
 						if(curPizzaBehavior.toppings[i].activeInHierarchy != orderedToppings[i])
@@ -84,19 +101,46 @@ public class GameBehavior : MonoBehaviour
 							if(curPizzaBehavior.toppings[i].activeInHierarchy && !orderedToppings[i])
 							{
 								score -= 2;
+								if(!wrongToppings)
+								{
+									mistakeText.text += "Wrong Toppings!\n";
+									wrongToppings = true;
+								}
 							}
 
 							// Forgot something
 							else
 							{
 								score -= 1;
+								if(!forgotToppings)
+								{
+									mistakeText.text += "Forgot Toppings!\n";
+									forgotToppings = true;
+								}
 							}
 						}
 					}
 					if(!messedUp)
 					{
 						score += 15;
+						if((int)orderTime > 15)
+						{
+							mistakeText.text += "Too Slow!";
+						}
+						else if ((int)orderTime > 10)
+						{
+							mistakeText.text += "Good!";
+						}
+						else if ((int)orderTime > 5)
+						{
+							mistakeText.text += "Great!";
+						}
+						else
+						{
+							mistakeText.text += "Incredible!";
+						}
 					}
+
 					score -= (int)(orderTime);
 
 					pizzasServed++;
