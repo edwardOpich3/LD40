@@ -7,48 +7,52 @@ public class OrderBehavior : MonoBehaviour
 	private enum TOPPINGS { CRUST, SAUCE, CHEESE, PEPPERONI, ANCHOVIES, MUSHROOMS, PEPPERS, ONIONS };
 
 	public Rigidbody2D orderRB;
+	private BoxCollider2D orderCol;
 
 	public PizzaBehavior pizza;
 	private TextMesh toppings;
 
 	private bool isSliding;
+	private bool[] orderedToppings;
 
 	// Use this for initialization
 	void Start ()
 	{
 		orderRB = GetComponent<Rigidbody2D>();
+		orderCol = GetComponent<BoxCollider2D>();
 
 		isSliding = false;
 
-		pizza = GameObject.Find("Pizza").GetComponent<PizzaBehavior>();
 		toppings = transform.GetChild(0).gameObject.GetComponent<TextMesh>();
 		toppings.text = "";
 
-		if(!pizza.orderedToppings[(int)TOPPINGS.SAUCE])
+		orderedToppings = GameObject.Find("Game Manager").GetComponent<GameBehavior>().orderedToppings;
+
+		if(!orderedToppings[(int)TOPPINGS.SAUCE])
 		{
 			toppings.text += "- Sauce\n";
 		}
-		if(!pizza.orderedToppings[(int)TOPPINGS.CHEESE])
+		if(!orderedToppings[(int)TOPPINGS.CHEESE])
 		{
 			toppings.text += "- Cheese\n";
 		}
-		if(pizza.orderedToppings[(int)TOPPINGS.PEPPERONI])
+		if(orderedToppings[(int)TOPPINGS.PEPPERONI])
 		{
 			toppings.text += "'Roni\n";
 		}
-		if(pizza.orderedToppings[(int)TOPPINGS.ANCHOVIES])
+		if(orderedToppings[(int)TOPPINGS.ANCHOVIES])
 		{
 			toppings.text += "'Chovies\n";
 		}
-		if(pizza.orderedToppings[(int)TOPPINGS.MUSHROOMS])
+		if(orderedToppings[(int)TOPPINGS.MUSHROOMS])
 		{
 			toppings.text += "Mush.\n";
 		}
-		if(pizza.orderedToppings[(int)TOPPINGS.PEPPERS])
+		if(orderedToppings[(int)TOPPINGS.PEPPERS])
 		{
 			toppings.text += "Pep.\n";
 		}
-		if(pizza.orderedToppings[(int)TOPPINGS.ONIONS])
+		if(orderedToppings[(int)TOPPINGS.ONIONS])
 		{
 			toppings.text += "On.\n";
 		}
@@ -60,11 +64,9 @@ public class OrderBehavior : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		if(pizza.isSliding && !isSliding)
+		if (Camera.main.WorldToViewportPoint(new Vector2(0.0f , transform.position.y + 2.56f)).y < 0.0f)
 		{
-			isSliding = true;
-
-			orderRB.AddForce(new Vector2(0.0f, -1000.0f));
+			Destroy(gameObject);
 		}
 	}
 }

@@ -10,11 +10,10 @@ public class PizzaBehavior : MonoBehaviour
 	private enum TOPPINGS { CRUST, SAUCE, CHEESE, PEPPERONI, ANCHOVIES, MUSHROOMS, PEPPERS, ONIONS };
 
 	public GameObject[] toppings;	// How many of what topping are on the pizza? The size should equal the max number of toppings
-	public bool[] orderedToppings;	// How many of what topping NEED to be on the pizza?
 
 	public bool isSliding;		// Is the pizza currently in motion?
 
-	private Rigidbody2D pizzaRB;
+	public Rigidbody2D pizzaRB;
 	private CircleCollider2D pizzaCol;
 
 	// Use this for initialization
@@ -22,14 +21,10 @@ public class PizzaBehavior : MonoBehaviour
 	{
 		isSliding = false;
 		toppings = new GameObject[8];
-		orderedToppings = new bool[8];
-
 		for(uint i = 0; i < toppings.Length; i++)
 		{
 			toppings[i] = transform.GetChild((int)i).gameObject;
 			toppings[i].SetActive(false);
-
-			orderedToppings[i] = Random.Range(0, 2) == 1;
 		}
 
 		pizzaRB = GetComponent<Rigidbody2D>();
@@ -108,24 +103,6 @@ public class PizzaBehavior : MonoBehaviour
 		if(isSliding)
 		{
 			pizzaRB.AddForce((-pizzaRB.velocity * pizzaRB.mass) / (Time.deltaTime * 50.0f));
-		}
-
-		// You sent the order
-		if(Camera.main.WorldToViewportPoint(new Vector2(transform.position.x - pizzaCol.radius, 0.0f)).x > 1.0f)
-		{
-			GameObject myObject = Instantiate(newPizza);
-			myObject.name = "Pizza";
-
-			Destroy(gameObject);
-		}
-
-		// You recycled the pizza
-		else if (Camera.main.WorldToViewportPoint(new Vector2(transform.position.x + pizzaCol.radius, 0.0f)).x < 0.0f)
-		{
-			GameObject myObject = Instantiate(newPizza);
-			myObject.name = "Pizza";
-
-			Destroy(gameObject);
 		}
 	}
 }
