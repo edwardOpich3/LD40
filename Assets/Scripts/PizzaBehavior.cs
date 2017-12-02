@@ -7,11 +7,14 @@ public class PizzaBehavior : MonoBehaviour
 	private enum TOPPINGS { CRUST, SAUCE, CHEESE, PEPPERONI, ANCHOVIES, MUSHROOMS, PEPPERS, ONIONS };
 	private char[] toppings;	// How many of what topping are on the pizza? The size should equal the max number of toppings
 
+	private bool isSliding;		// Is the pizza currently in motion?
+
 	private Rigidbody2D pizzaRB;
 
 	// Use this for initialization
 	void Start ()
 	{
+		isSliding = false;
 		toppings = new char[8];
 
 		pizzaRB = GetComponent<Rigidbody2D>();
@@ -20,9 +23,24 @@ public class PizzaBehavior : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		if(Input.GetKeyDown(Input.KeyCode.LeftArrow))
+		if(Input.GetKeyDown(KeyCode.RightArrow) && !isSliding)
 		{
-			pizzaRB.AddForce(Vector2(10.0f, 0.0f));
+			isSliding = true;
+
+			pizzaRB.AddForce(new Vector2(1000.0f, 0.0f));
+			pizzaRB.AddTorque(-50.0f);
+		}
+		else if(Input.GetKeyDown(KeyCode.LeftArrow) && !isSliding)
+		{
+			isSliding = true;
+
+			pizzaRB.AddForce(new Vector2(-1000.0f, 0.0f));
+			pizzaRB.AddTorque(50.0f);
+		}
+
+		if(isSliding)
+		{
+			pizzaRB.AddForce((-pizzaRB.velocity * pizzaRB.mass) / (Time.deltaTime * 50.0f));
 		}
 	}
 }
