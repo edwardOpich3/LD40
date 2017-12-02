@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class GameBehavior : MonoBehaviour
 {
-	private enum TOPPINGS { CRUST, SAUCE, CHEESE, PEPPERONI, ANCHOVIES, MUSHROOMS, PEPPERS, ONIONS };
-	private bool[] currentOrder;	// The current order up that the player needs to match
-
+	public GameObject pizzaPF;		// Pizza Prefab
+	public GameObject orderPF;		// Order Prefab
 
 	// Use this for initialization
 	void Start ()

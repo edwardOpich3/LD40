@@ -5,12 +5,14 @@ using UnityEngine;
 public class PizzaBehavior : MonoBehaviour
 {
 	public GameObject newPizza;
+	public GameObject newOrder;
 
 	private enum TOPPINGS { CRUST, SAUCE, CHEESE, PEPPERONI, ANCHOVIES, MUSHROOMS, PEPPERS, ONIONS };
 
-	private GameObject[] toppings;	// How many of what topping are on the pizza? The size should equal the max number of toppings
+	public GameObject[] toppings;	// How many of what topping are on the pizza? The size should equal the max number of toppings
+	public bool[] orderedToppings;	// How many of what topping NEED to be on the pizza?
 
-	private bool isSliding;		// Is the pizza currently in motion?
+	public bool isSliding;		// Is the pizza currently in motion?
 
 	private Rigidbody2D pizzaRB;
 	private CircleCollider2D pizzaCol;
@@ -20,11 +22,14 @@ public class PizzaBehavior : MonoBehaviour
 	{
 		isSliding = false;
 		toppings = new GameObject[8];
+		orderedToppings = new bool[8];
 
 		for(uint i = 0; i < toppings.Length; i++)
 		{
 			toppings[i] = transform.GetChild((int)i).gameObject;
 			toppings[i].SetActive(false);
+
+			orderedToppings[i] = Random.Range(0, 2) == 1;
 		}
 
 		pizzaRB = GetComponent<Rigidbody2D>();
