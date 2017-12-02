@@ -143,7 +143,7 @@ public class GameBehavior : MonoBehaviour
 
 		else if (currentScene.name == "Results")
 		{
-			uiText = GameObject.Find("Text").GetComponent<Text>();
+			uiText = GameObject.Find("Stats").GetComponent<Text>();
 			uiText.text = "Final Score:\n";
 			uiText.text += score + "\n";
 			uiText.text += "Pizzas Served:\n";
