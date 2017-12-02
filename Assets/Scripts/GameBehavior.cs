@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameBehavior : MonoBehaviour
 {
 	private enum TOPPINGS { CRUST, SAUCE, CHEESE, PEPPERONI, ANCHOVIES, MUSHROOMS, PEPPERS, ONIONS };
-	private char[] currentOrder;	// The current order up that the player needs to match
+	private bool[] currentOrder;	// The current order up that the player needs to match
 
 
 	// Use this for initialization
