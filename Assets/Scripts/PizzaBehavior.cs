@@ -7,36 +7,44 @@ public class PizzaBehavior : MonoBehaviour
 	public GameObject newPizza;
 
 	private enum TOPPINGS { CRUST, SAUCE, CHEESE, PEPPERONI, ANCHOVIES, MUSHROOMS, PEPPERS, ONIONS };
-	public bool[] toppings;	// How many of what topping are on the pizza? The size should equal the max number of toppings
+
+	private GameObject[] toppings;	// How many of what topping are on the pizza? The size should equal the max number of toppings
 
 	private bool isSliding;		// Is the pizza currently in motion?
 
 	private Rigidbody2D pizzaRB;
 	private CircleCollider2D pizzaCol;
-	private SpriteRenderer[] pizzaSprites;
 
 	// Use this for initialization
 	void Start ()
 	{
 		isSliding = false;
-		toppings = new bool[8];
+		toppings = new GameObject[8];
+
+		for(uint i = 0; i < toppings.Length; i++)
+		{
+			toppings[i] = transform.GetChild((int)i).gameObject;
+			toppings[i].SetActive(false);
+		}
 
 		pizzaRB = GetComponent<Rigidbody2D>();
 		pizzaCol = GetComponent<CircleCollider2D>();
-		pizzaSprites = GetComponents<SpriteRenderer>();
+
+		transform.position = new Vector3(0.0f, -2.5f, 0.0f);
+		transform.rotation = Quaternion.identity;
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
-		if(Input.GetKeyDown(KeyCode.RightArrow) && !isSliding)
+		if(Input.GetKeyDown(KeyCode.RightArrow) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
 		{
 			isSliding = true;
 
 			pizzaRB.AddForce(new Vector2(1000.0f, 0.0f));
 			pizzaRB.AddTorque(-50.0f);
 		}
-		else if(Input.GetKeyDown(KeyCode.LeftArrow) && !isSliding)
+		else if(Input.GetKeyDown(KeyCode.LeftArrow) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
 		{
 			isSliding = true;
 
@@ -44,10 +52,52 @@ public class PizzaBehavior : MonoBehaviour
 			pizzaRB.AddTorque(50.0f);
 		}
 
-		if(Input.GetKeyUp(KeyCode.UpArrow) && !isSliding)
+		// Crust
+		if(Input.GetKeyDown(KeyCode.UpArrow) && !isSliding)
 		{
-			toppings[(int)TOPPINGS.CRUST] = true;
-			pizzaSprites[(int)TOPPINGS.CRUST].enabled = true;
+			toppings[(int)TOPPINGS.CRUST].SetActive(true);
+		}
+
+		// Sauce
+		if(Input.GetKeyDown(KeyCode.Q) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
+		{
+			toppings[(int)TOPPINGS.SAUCE].SetActive(true);
+		}
+
+		// Cheese
+		if(Input.GetKeyDown(KeyCode.W) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
+		{
+			toppings[(int)TOPPINGS.CHEESE].SetActive(true);
+		}
+
+		// Pepperoni
+		if(Input.GetKeyDown(KeyCode.E) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
+		{
+			toppings[(int)TOPPINGS.PEPPERONI].SetActive(true);
+		}
+
+		// Anchovies
+		if(Input.GetKeyDown(KeyCode.R) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
+		{
+			toppings[(int)TOPPINGS.ANCHOVIES].SetActive(true);
+		}
+
+		// Mushrooms
+		if(Input.GetKeyDown(KeyCode.T) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
+		{
+			toppings[(int)TOPPINGS.MUSHROOMS].SetActive(true);
+		}
+
+		// Peppers
+		if(Input.GetKeyDown(KeyCode.Y) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
+		{
+			toppings[(int)TOPPINGS.PEPPERS].SetActive(true);
+		}
+
+		// Onions
+		if(Input.GetKeyDown(KeyCode.U) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
+		{
+			toppings[(int)TOPPINGS.ONIONS].SetActive(true);
 		}
 
 		if(isSliding)
@@ -58,7 +108,7 @@ public class PizzaBehavior : MonoBehaviour
 		// You sent the order
 		if(Camera.main.WorldToViewportPoint(new Vector2(transform.position.x - pizzaCol.radius, 0.0f)).x > 1.0f)
 		{
-			GameObject myObject = Instantiate(newPizza, new Vector3(0.0f, -2.5f, 0.0f), Quaternion.identity);
+			GameObject myObject = Instantiate(newPizza);
 			myObject.name = "Pizza";
 
 			Destroy(gameObject);
@@ -67,12 +117,10 @@ public class PizzaBehavior : MonoBehaviour
 		// You recycled the pizza
 		else if (Camera.main.WorldToViewportPoint(new Vector2(transform.position.x + pizzaCol.radius, 0.0f)).x < 0.0f)
 		{
-			GameObject myObject = Instantiate(newPizza, new Vector3(0.0f, -2.5f, 0.0f), Quaternion.identity);
-			Destroy(gameObject);
-
+			GameObject myObject = Instantiate(newPizza);
 			myObject.name = "Pizza";
-			PizzaBehavior test = myObject.GetComponent<PizzaBehavior>();
-			bool[] test2 = test.toppings;
+
+			Destroy(gameObject);
 		}
 	}
 }
