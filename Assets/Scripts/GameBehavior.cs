@@ -65,7 +65,6 @@ public class GameBehavior : MonoBehaviour
 			{
 				// Game over condition here!
 				timeLeft = 0.0f;
-				score -= (int)(orderTime);
 				SceneManager.LoadScene("Results");
 			}
 
