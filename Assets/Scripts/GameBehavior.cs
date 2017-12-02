@@ -11,7 +11,9 @@ public class GameBehavior : MonoBehaviour
 	public bool[] orderedToppings;	// How many of what topping NEED to be on the pizza?
 
 	private int score;
-	public Text scoreText;
+	private float orderTime;		// Time since the order was given, in seconds
+	private float timeLeft;			// Time left in the day, in seconds
+	public Text uiText;
 
 	private GameObject curPizza;
 	private PizzaBehavior curPizzaBehavior;
@@ -29,7 +31,12 @@ public class GameBehavior : MonoBehaviour
 		orderedToppings[0] = true;
 
 		score = 0;
-		scoreText.text = "Score: " + score;
+		orderTime = 0.0f;
+		timeLeft = 3.0f * 60.0f;
+
+		uiText.text = "Score: " + score + "\n";
+		uiText.text += "Order Time: " + string.Format("{0}:{1:00}", (int)orderTime / 60, (int)orderTime % 60) + "\n";
+		uiText.text += "Time Left: " + string.Format("{0}:{1:00}", (int)timeLeft / 60, (int)timeLeft % 60) + "\n";
 
 		curPizza = Instantiate(pizzaPF);
 		curPizza.name = "Pizza";
@@ -44,6 +51,9 @@ public class GameBehavior : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		orderTime += Time.deltaTime;
+		timeLeft -= Time.deltaTime;
+
 		if(curPizza)
 		{
 			// You sent the order
@@ -74,9 +84,8 @@ public class GameBehavior : MonoBehaviour
 					score += 10;
 				}
 
-				scoreText.text = "Score: " + score;
-
 				Destroy(curPizza);
+				orderTime = 0.0f;
 
 				for(uint i = 1; i < orderedToppings.Length; i++)
 				{
@@ -109,5 +118,9 @@ public class GameBehavior : MonoBehaviour
 				curOrder.GetComponent<OrderBehavior>().pizza = curPizza.GetComponent<PizzaBehavior>();
 			}
 		}
+
+		uiText.text = "Score: " + score + "\n";
+		uiText.text += "Order Time: " + string.Format("{0}:{1:00}", (int)orderTime / 60, (int)orderTime % 60) + "\n";
+		uiText.text += "Time Left: " + string.Format("{0}:{1:00}", (int)timeLeft / 60, (int)timeLeft % 60) + "\n";
 	}
 }

@@ -59,43 +59,43 @@ public class PizzaBehavior : MonoBehaviour
 		}
 
 		// Sauce
-		if(Input.GetKeyDown(KeyCode.Q) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
+		if(Input.GetKeyDown(KeyCode.Alpha1) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
 		{
 			toppings[(int)TOPPINGS.SAUCE].SetActive(true);
 		}
 
 		// Cheese
-		if(Input.GetKeyDown(KeyCode.W) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
+		if(Input.GetKeyDown(KeyCode.Alpha2) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
 		{
 			toppings[(int)TOPPINGS.CHEESE].SetActive(true);
 		}
 
 		// Pepperoni
-		if(Input.GetKeyDown(KeyCode.E) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
+		if(Input.GetKeyDown(KeyCode.Alpha3) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
 		{
 			toppings[(int)TOPPINGS.PEPPERONI].SetActive(true);
 		}
 
 		// Anchovies
-		if(Input.GetKeyDown(KeyCode.R) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
+		if(Input.GetKeyDown(KeyCode.Alpha4) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
 		{
 			toppings[(int)TOPPINGS.ANCHOVIES].SetActive(true);
 		}
 
 		// Mushrooms
-		if(Input.GetKeyDown(KeyCode.T) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
+		if(Input.GetKeyDown(KeyCode.Alpha5) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
 		{
 			toppings[(int)TOPPINGS.MUSHROOMS].SetActive(true);
 		}
 
 		// Peppers
-		if(Input.GetKeyDown(KeyCode.Y) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
+		if(Input.GetKeyDown(KeyCode.Alpha6) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
 		{
 			toppings[(int)TOPPINGS.PEPPERS].SetActive(true);
 		}
 
 		// Onions
-		if(Input.GetKeyDown(KeyCode.U) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
+		if(Input.GetKeyDown(KeyCode.Alpha7) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
 		{
 			toppings[(int)TOPPINGS.ONIONS].SetActive(true);
 		}
