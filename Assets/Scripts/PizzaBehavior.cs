@@ -10,6 +10,7 @@ public class PizzaBehavior : MonoBehaviour
 	private bool isSliding;		// Is the pizza currently in motion?
 
 	private Rigidbody2D pizzaRB;
+	private CircleCollider2D pizzaCol;
 
 	// Use this for initialization
 	void Start ()
@@ -18,6 +19,7 @@ public class PizzaBehavior : MonoBehaviour
 		toppings = new char[8];
 
 		pizzaRB = GetComponent<Rigidbody2D>();
+		pizzaCol = GetComponent<CircleCollider2D>();
 	}
 	
 	// Update is called once per frame
@@ -41,6 +43,18 @@ public class PizzaBehavior : MonoBehaviour
 		if(isSliding)
 		{
 			pizzaRB.AddForce((-pizzaRB.velocity * pizzaRB.mass) / (Time.deltaTime * 50.0f));
+		}
+
+		// You sent the order
+		if(Camera.main.WorldToViewportPoint(new Vector2(transform.position.x - pizzaCol.radius, 0.0f)).x > 1.0f)
+		{
+			Destroy(gameObject);
+		}
+
+		// You recycled the pizza
+		else if (Camera.main.WorldToViewportPoint(new Vector2(transform.position.x + pizzaCol.radius, 0.0f)).x < 0.0f)
+		{
+			Destroy(gameObject);
 		}
 	}
 }
