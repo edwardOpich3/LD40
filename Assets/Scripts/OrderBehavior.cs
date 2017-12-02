@@ -57,6 +57,11 @@ public class OrderBehavior : MonoBehaviour
 			toppings.text += "On.\n";
 		}
 
+		if(toppings.text == "")
+		{
+			toppings.text = "Plain";
+		}
+
 		transform.position = new Vector3(4.3f, -2.5f, 0.0f);
 		transform.rotation = Quaternion.identity;
 	}
