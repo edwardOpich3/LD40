@@ -65,7 +65,7 @@ public class GameBehavior : MonoBehaviour
 			{
 				// Game over condition here!
 				timeLeft = 0.0f;
-				score -= (int)(orderTime - 2.0f);
+				score -= (int)(orderTime);
 				SceneManager.LoadScene("Results");
 			}
 
@@ -96,9 +96,9 @@ public class GameBehavior : MonoBehaviour
 					}
 					if(!messedUp)
 					{
-						score += 10;
+						score += 15;
 					}
-					score -= (int)(orderTime - 2.0f);
+					score -= (int)(orderTime);
 
 					pizzasServed++;
 
