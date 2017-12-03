@@ -9,6 +9,15 @@ public class GameBehavior : MonoBehaviour
 	public GameObject pizzaPF;		// Pizza Prefab
 	public GameObject orderPF;		// Order Prefab
 
+	// Here there be level things! Adjust accordingly!
+	public int level;						// Current level; used to determine how long you have to make a pizza, or which toppings are available
+	public int maxLevel;					// The last level; if level passes above this, the game is over!
+	public bool[][] levelToppings;			// Which toppings are available on which level?
+	public int[] levelCustomers;			// How many customers are there each level?
+	public int[] levelScores;				// What's the minimum score needed to pass each level?
+	public float[] levelLengths;			// What's the length in seconds of each level?
+	public float[] levelPizzaTime;			// How long in seconds can one take making a pizza per level?
+
 	public bool[] orderedToppings;	// How many of what topping NEED to be on the pizza?
 
 	private int score;
@@ -28,20 +37,33 @@ public class GameBehavior : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+		// Here's where you define the toppings that are available for each level!
+		levelToppings = new bool[][] { new bool[8], new bool[8], new bool[8], new bool[8] };
+		levelToppings[0] = new bool[8] { false, false, false, true, false, false, false, false };
+		levelToppings[1] = new bool[8] { false, false, false, true, false, false, true, true };
+		levelToppings[2] = new bool[8] { false, false, false, true, true, true, true, true };
+		levelToppings[3] = new bool[8] { false, true, true, true, true, true, true, true };
+
 		DontDestroyOnLoad(gameObject);
 
 		gameStarted = false;
 
+		level = 0;
+
 		orderedToppings = new bool[8];
 		for(uint i = 1; i < orderedToppings.Length; i++)
 		{
-			orderedToppings[i] = Random.Range(0, 2) == 1;
+			orderedToppings[i] = (Random.Range(0, 2) == 1) && levelToppings[level][i];
+			if(i < 3)
+			{
+				orderedToppings[i] = !orderedToppings[i];
+			}
 		}
 		orderedToppings[0] = true;
 
 		score = 0;
 		orderTime = 0.0f;
-		timeLeft = 1.0f * 60.0f;
+		timeLeft = levelLengths[level];
 		pizzasServed = 0;
 
 		uiText.text = "Score: " + score + "\n";
@@ -76,8 +98,10 @@ public class GameBehavior : MonoBehaviour
 			timeLeft -= Time.deltaTime;
 			if(timeLeft < 0.0f)
 			{
-				// Game over condition here!
+				// Level over. Subtract appropriate points for the remaining customers.
 				timeLeft = 0.0f;
+				level++;
+				score -= (levelCustomers[level] - pizzasServed) * 10;
 				SceneManager.LoadScene("Results");
 			}
 
@@ -123,15 +147,15 @@ public class GameBehavior : MonoBehaviour
 					if(!messedUp)
 					{
 						score += 15;
-						if((int)orderTime > 15)
+						if((int)orderTime > levelPizzaTime[level])
 						{
 							mistakeText.text += "Too Slow!";
 						}
-						else if ((int)orderTime > 10)
+						else if ((int)orderTime > (2.0f * levelPizzaTime[level]) / 3.0f)
 						{
 							mistakeText.text += "Good!";
 						}
-						else if ((int)orderTime > 5)
+						else if ((int)orderTime > levelPizzaTime[level] / 3.0f)
 						{
 							mistakeText.text += "Great!";
 						}
@@ -144,13 +168,24 @@ public class GameBehavior : MonoBehaviour
 					score -= (int)(orderTime);
 
 					pizzasServed++;
+					if(pizzasServed >= levelCustomers[level])
+					{
+						// Level complete! Add a remaining time bonus!
+						level++;
+						score += (int)timeLeft;
+						SceneManager.LoadScene("Results");
+					}
 
 					Destroy(curPizza);
 					orderTime = 0.0f;
 
 					for(uint i = 1; i < orderedToppings.Length; i++)
 					{
-						orderedToppings[i] = Random.Range(0, 2) == 1;
+						orderedToppings[i] = (Random.Range(0, 2) == 1) && levelToppings[level][i];
+						if(i < 3)
+						{
+							orderedToppings[i] = !orderedToppings[i];
+						}
 					}
 					orderedToppings[0] = true;
 
