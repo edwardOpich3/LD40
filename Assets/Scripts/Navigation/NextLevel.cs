@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class BeginGame : MonoBehaviour
+public class NextLevel : MonoBehaviour
 {
 	public Button myButton;
 
@@ -12,7 +12,7 @@ public class BeginGame : MonoBehaviour
 	void Start ()
 	{
 		myButton = GetComponent<Button>();
-		myButton.onClick.AddListener(ToGame);
+		myButton.onClick.AddListener(Navigate);
 	}
 	
 	// Update is called once per frame
@@ -21,7 +21,7 @@ public class BeginGame : MonoBehaviour
 		
 	}
 
-	void ToGame()
+	void Navigate()
 	{
 		SceneManager.LoadScene("Gameplay");
 
