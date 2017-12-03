@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
-public class BeginGame : MonoBehaviour
+public class ToCutscene : MonoBehaviour
 {
 	public Button myButton;
 
@@ -12,7 +12,7 @@ public class BeginGame : MonoBehaviour
 	void Start ()
 	{
 		myButton = GetComponent<Button>();
-		myButton.onClick.AddListener(ToGame);
+		myButton.onClick.AddListener(Navigation);
 	}
 	
 	// Update is called once per frame
@@ -21,7 +21,7 @@ public class BeginGame : MonoBehaviour
 		
 	}
 
-	void ToGame()
+	void Navigation()
 	{
 		SceneManager.LoadScene("Cutscene");
 	}

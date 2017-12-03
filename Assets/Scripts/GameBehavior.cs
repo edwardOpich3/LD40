@@ -218,6 +218,60 @@ public class GameBehavior : MonoBehaviour
 				}
 			}
 		}
+
+		else if (currentScene.name == "Cutscene")
+		{
+			if(Input.GetMouseButtonDown(0))
+			{
+				SceneManager.LoadScene("Gameplay");
+				SceneManager.sceneLoaded += init;
+			}
+
+			if(!uiText)
+			{
+				uiText = GameObject.Find("Canvas").transform.GetChild(0).transform.GetChild(0).GetComponent<Text>();
+			}
+
+			if(uiText.text == "")
+			{
+				if(level == 0)
+				{
+					uiText.text = "Hey, welcome to the shop! Business around here is pretty slow, so you don't have too much to worry about.\n" +
+						"Just make the pizzas correctly, that's all I, and the customers, ask.\n" +
+						"We don't have many toppings here, just pepperoni, so it shouldn't be too hard to mess up anyway!\n" +
+						"Good luck out there!\n\n";
+
+					uiText.text += "(Press Left mouse button to continue.)";
+				}
+				else if(level == 1)
+				{
+					uiText.text = "Good job making those pizzas! Not bad at all for your first time on the job.\n" +
+					"We're getting some more toppings tomorrow though due to popular demand! Onions and Peppers.\n" +
+					"Hopefully that won't be too tough for you to juggle. Oh, and try not to mix up orders asking " +
+						"for pepperoni with orders asking for peppers!\n\n";
+
+					uiText.text += "(Press Left mouse button to continue.)";
+				}
+				else if (level == 2)
+				{
+					uiText.text = "You've been great so far! Business is picking up quite a bit around here.\n" +
+						"Tomorrow we're getting even more toppings! Anchovies and Mushrooms.\n" +
+						"Also, with the extra customers, you might have to work a bit quicker to make sure they're all satisifed!\n" +
+						"You can handle that, right?\n\n";
+
+					uiText.text += "(Press Left mouse button to continue.)";
+				}
+				else if (level == 3)
+				{
+					uiText.text = "Our shop's on the web now with some remote ordering software! Isn't that great?\n" +
+						"That means even more customers! The ordering software comes with complete customizability of pizzas.\n" +
+						"I tested, and if someone wanted to, they could even order a pizza with no cheese or sauce!\n" +
+						"Not that they'd want to of course. Anyway, good luck today!\n\n";
+
+					uiText.text += "(Press Left mouse button to continue.)";
+				}
+			}
+		}
 	}
 
 	public void init(Scene scene, LoadSceneMode mode)
@@ -248,6 +302,15 @@ public class GameBehavior : MonoBehaviour
 		mistakeText.text = "Press Up Arrow to start!";
 
 		customersText.text = "Customers:\n\n" + levelCustomers[level];
+
+		if(level < 1)
+		{
+			GameObject.Find("Level 2").SetActive(false);
+		}
+		if (level < 2)
+		{
+			GameObject.Find("Level 3").SetActive(false);
+		}
 
 		curPizza = Instantiate(pizzaPF);
 		curPizza.name = "Pizza";

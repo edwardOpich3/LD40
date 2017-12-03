@@ -10,6 +10,9 @@ public class PizzaBehavior : MonoBehaviour
 	private enum TOPPINGS { CRUST, SAUCE, CHEESE, PEPPERONI, ANCHOVIES, MUSHROOMS, PEPPERS, ONIONS };
 
 	public GameObject[] toppings;	// How many of what topping are on the pizza? The size should equal the max number of toppings
+	private bool[] availableToppings;	// How many toppings are currenty usable?
+
+	private int level;					// Current level
 
 	public bool isSliding;		// Is the pizza currently in motion?
 
@@ -19,6 +22,9 @@ public class PizzaBehavior : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+		level = GameObject.Find("Game Manager").GetComponent<GameBehavior>().level;
+		availableToppings = GameObject.Find("Game Manager").GetComponent<GameBehavior>().levelToppings[level];
+
 		isSliding = false;
 		toppings = new GameObject[8];
 		for(uint i = 0; i < toppings.Length; i++)
@@ -77,25 +83,25 @@ public class PizzaBehavior : MonoBehaviour
 		}
 
 		// Anchovies
-		if(Input.GetKeyDown(KeyCode.Alpha4) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
+		if(Input.GetKeyDown(KeyCode.Alpha4) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy && availableToppings[(int)TOPPINGS.ANCHOVIES])
 		{
 			toppings[(int)TOPPINGS.ANCHOVIES].SetActive(true);
 		}
 
 		// Mushrooms
-		if(Input.GetKeyDown(KeyCode.Alpha5) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
+		if(Input.GetKeyDown(KeyCode.Alpha5) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy && availableToppings[(int)TOPPINGS.MUSHROOMS])
 		{
 			toppings[(int)TOPPINGS.MUSHROOMS].SetActive(true);
 		}
 
 		// Peppers
-		if(Input.GetKeyDown(KeyCode.Alpha6) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
+		if(Input.GetKeyDown(KeyCode.Alpha6) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy && availableToppings[(int)TOPPINGS.PEPPERS])
 		{
 			toppings[(int)TOPPINGS.PEPPERS].SetActive(true);
 		}
 
 		// Onions
-		if(Input.GetKeyDown(KeyCode.Alpha7) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
+		if(Input.GetKeyDown(KeyCode.Alpha7) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy && availableToppings[(int)TOPPINGS.ONIONS])
 		{
 			toppings[(int)TOPPINGS.ONIONS].SetActive(true);
 		}
