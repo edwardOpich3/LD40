@@ -26,6 +26,7 @@ public class GameBehavior : MonoBehaviour
 	private int pizzasServed;
 	public Text uiText;
 	public Text mistakeText;
+	public Text customersText;
 
 	bool gameStarted;
 
@@ -63,7 +64,7 @@ public class GameBehavior : MonoBehaviour
 		Scene currentScene = SceneManager.GetActiveScene();
 		if(currentScene.name == "Gameplay" && gameStarted)
 		{
-			orderTime += Time.deltaTime;
+			orderTime -= Time.deltaTime;
 			timeLeft -= Time.deltaTime;
 			if(timeLeft < 0.0f)
 			{
@@ -123,16 +124,16 @@ public class GameBehavior : MonoBehaviour
 					}
 					if(!messedUp)
 					{
-						score += 15;
-						if((int)orderTime > levelPizzaTime[level])
+						score += (int)levelPizzaTime[level];
+						if((int)orderTime <= 0.0f)
 						{
 							mistakeText.text += "Too Slow!";
 						}
-						else if ((int)orderTime > (2.0f * levelPizzaTime[level]) / 3.0f)
+						else if ((int)orderTime < levelPizzaTime[level] / 3.0f)
 						{
 							mistakeText.text += "Good!";
 						}
-						else if ((int)orderTime > levelPizzaTime[level] / 3.0f)
+						else if ((int)orderTime < (2.0f * levelPizzaTime[level]) / 3.0f)
 						{
 							mistakeText.text += "Great!";
 						}
@@ -142,7 +143,7 @@ public class GameBehavior : MonoBehaviour
 						}
 					}
 
-					score -= (int)(orderTime);
+					score -= (int)(levelPizzaTime[level] - orderTime);
 
 					pizzasServed++;
 					if(pizzasServed >= levelCustomers[level])
@@ -160,30 +161,33 @@ public class GameBehavior : MonoBehaviour
 						}
 					}
 
-					Destroy(curPizza);
-					orderTime = 0.0f;
-
-					for(uint i = 1; i < orderedToppings.Length; i++)
+					else
 					{
-						orderedToppings[i] = (Random.Range(0, 2) == 1) && levelToppings[level][i];
-						if(i < 3)
+						Destroy(curPizza);
+						orderTime = levelPizzaTime[level];
+
+						for(uint i = 1; i < orderedToppings.Length; i++)
 						{
-							orderedToppings[i] = !orderedToppings[i];
+							orderedToppings[i] = (Random.Range(0, 2) == 1) && levelToppings[level][i];
+							if(i < 3)
+							{
+								orderedToppings[i] = !orderedToppings[i];
+							}
 						}
+						orderedToppings[0] = true;
+
+						curOrder.transform.Translate(0.0f, 0.0f, -5.0f);
+						curOrder.GetComponent<Rigidbody2D>().AddForce(new Vector2(0.0f, -1000.0f));
+
+						curPizza = Instantiate(pizzaPF);
+						curPizza.name = "Pizza";
+						curPizzaBehavior = curPizza.GetComponent<PizzaBehavior>();
+
+						curOrder = Instantiate(orderPF);
+						curOrder.name = "Order Sheet";
+
+						curOrder.GetComponent<OrderBehavior>().pizza = curPizza.GetComponent<PizzaBehavior>();
 					}
-					orderedToppings[0] = true;
-
-					curOrder.transform.Translate(0.0f, 0.0f, -5.0f);
-					curOrder.GetComponent<Rigidbody2D>().AddForce(new Vector2(0.0f, -1000.0f));
-
-					curPizza = Instantiate(pizzaPF);
-					curPizza.name = "Pizza";
-					curPizzaBehavior = curPizza.GetComponent<PizzaBehavior>();
-
-					curOrder = Instantiate(orderPF);
-					curOrder.name = "Order Sheet";
-
-					curOrder.GetComponent<OrderBehavior>().pizza = curPizza.GetComponent<PizzaBehavior>();
 				}
 
 				// You recycled the pizza
@@ -200,11 +204,22 @@ public class GameBehavior : MonoBehaviour
 			}
 
 			uiText.text = "Score: " + score + "\n";
-			uiText.text += "Order Time: " + string.Format("{0}:{1:00}", (int)orderTime / 60, (int)orderTime % 60) + "\n";
+
+			if(orderTime > 0.0f)
+			{
+				uiText.text += "Order Time: " + string.Format("{0}:{1:00}", (int)orderTime / 60, (int)orderTime % 60) + "\n";
+			}
+			else
+			{
+				uiText.text += "Order Time: 0:00\n";
+			}
+
 			uiText.text += "Time Left: " + string.Format("{0}:{1:00}", (int)timeLeft / 60, (int)timeLeft % 60) + "\n";
+
+			customersText.text = "Customers:\n\n" + (levelCustomers[level] - pizzasServed);
 		}
 
-		else if (currentScene.name == "Results")
+		else if (currentScene.name == "Results" || currentScene.name == "WinGame")
 		{
 			uiText = GameObject.Find("Stats").GetComponent<Text>();
 			uiText.text = "Final Score:\n";
@@ -229,18 +244,21 @@ public class GameBehavior : MonoBehaviour
 		orderedToppings[0] = true;
 
 		score = 0;
-		orderTime = 0.0f;
+		orderTime = levelPizzaTime[level];
 		timeLeft = levelLengths[level];
 		pizzasServed = 0;
 
 		uiText = GameObject.Find("Canvas").transform.GetChild(0).transform.GetChild(0).GetComponent<Text>();
 		mistakeText = GameObject.Find("Canvas").transform.GetChild(1).transform.GetChild(0).GetComponent<Text>();
+		customersText = GameObject.Find("Canvas").transform.GetChild(2).transform.GetChild(0).GetComponent<Text>();
 
 		uiText.text = "Score: " + score + "\n";
 		uiText.text += "Order Time: " + string.Format("{0}:{1:00}", (int)orderTime / 60, (int)orderTime % 60) + "\n";
 		uiText.text += "Time Left: " + string.Format("{0}:{1:00}", (int)timeLeft / 60, (int)timeLeft % 60) + "\n";
 
 		mistakeText.text = "Press Up Arrow to start!";
+
+		customersText.text = "Customers:\n\n" + levelCustomers[level];
 
 		curPizza = Instantiate(pizzaPF);
 		curPizza.name = "Pizza";
