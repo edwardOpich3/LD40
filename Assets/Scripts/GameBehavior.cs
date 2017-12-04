@@ -47,6 +47,8 @@ public class GameBehavior : MonoBehaviour
 		if(GameObject.Find("Game Manager") != gameObject)
 		{
 			Destroy(gameObject);
+
+			return;
 		}
 
 		// Here's where you define the toppings that are available for each level!
@@ -106,6 +108,8 @@ public class GameBehavior : MonoBehaviour
 			if(gameMode == 1 && minScore > score)
 			{
 				SceneManager.LoadScene("WinGame");
+
+				GetComponent<AudioLowPassFilter>().enabled = false;
 			}
 
 			if(curPizza)
@@ -220,6 +224,7 @@ public class GameBehavior : MonoBehaviour
 							SceneManager.LoadScene("WinGame");
 						}
 
+						GetComponent<AudioLowPassFilter>().enabled = false;
 						return;
 					}
 						
@@ -459,6 +464,8 @@ public class GameBehavior : MonoBehaviour
 		curOrder.name = "Order Sheet";
 
 		curOrder.GetComponent<OrderBehavior>().pizza = curPizza.GetComponent<PizzaBehavior>();
+
+		GetComponent<AudioLowPassFilter>().enabled = true;
 
 		SceneManager.sceneLoaded -= init;
 	}
