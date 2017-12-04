@@ -23,6 +23,18 @@ public class BeginGame : MonoBehaviour
 
 	void ToGame()
 	{
-		SceneManager.LoadScene("Cutscene");
+		if(gameObject.name == "Beginner")
+		{
+			GameObject.Find("Game Manager").GetComponent<GameBehavior>().gameMode = 0;
+			SceneManager.LoadScene("Cutscene");
+		}
+
+		else if (gameObject.name == "Survival")
+		{
+			GameObject.Find("Game Manager").GetComponent<GameBehavior>().gameMode = 1;
+			SceneManager.LoadScene("Gameplay");
+
+			SceneManager.sceneLoaded += GameObject.Find("Game Manager").GetComponent<GameBehavior>().init;
+		}
 	}
 }

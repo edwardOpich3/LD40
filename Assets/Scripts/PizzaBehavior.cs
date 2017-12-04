@@ -25,6 +25,15 @@ public class PizzaBehavior : MonoBehaviour
 		level = GameObject.Find("Game Manager").GetComponent<GameBehavior>().level;
 		availableToppings = GameObject.Find("Game Manager").GetComponent<GameBehavior>().levelToppings[level];
 
+		if(GameObject.Find("Game Manager").GetComponent<GameBehavior>().gameMode == 1)
+		{
+			availableToppings = new bool[8];
+			for(int i = 0; i < availableToppings.Length; i++)
+			{
+				availableToppings[i] = true;
+			}
+		}
+
 		isSliding = false;
 		toppings = new GameObject[8];
 		for(uint i = 0; i < toppings.Length; i++)

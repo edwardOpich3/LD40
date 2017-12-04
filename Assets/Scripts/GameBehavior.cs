@@ -20,11 +20,17 @@ public class GameBehavior : MonoBehaviour
 	public bool[] orderedToppings;	// How many of what topping NEED to be on the pizza?
 
 	private int score;
+	private int minScore;			// Survival mode only. What's the score below which dipping will cause a game over?
 	private float orderTime;		// Time since the order was given, in seconds
 	private int pizzasServed;
 	public Text uiText;
 	public Text mistakeText;
 	public Text customersText;
+
+	private float timer;			// How much time since the game started? Used for survival.
+	private float pizzaTime;		// Time for the order. In seconds. Used for survival.
+
+	public int gameMode;				// Game mode; 0 = beginner, 1 = survival
 
 	bool gameStarted;
 
@@ -63,6 +69,34 @@ public class GameBehavior : MonoBehaviour
 		if(currentScene.name == "Gameplay" && gameStarted)
 		{
 			orderTime -= Time.deltaTime;
+			timer += Time.deltaTime;
+			if(timer >= 30.0f && gameMode == 1)
+			{
+				timer = 0.0f;
+				level++;
+				minScore += 100;
+
+				if(level > 3)
+				{
+					level = 3;
+					pizzaTime -= 1.0f;
+					minScore += 50;
+					if(pizzaTime < 3.0f)
+					{
+						pizzaTime = 3.0f;
+						minScore += 100;
+					}
+				}
+				else
+				{
+					pizzaTime = levelPizzaTime[level];
+				}
+			}
+
+			if(gameMode == 1 && minScore > score)
+			{
+				SceneManager.LoadScene("WinGame");
+			}
 
 			if(curPizza)
 			{
@@ -83,6 +117,7 @@ public class GameBehavior : MonoBehaviour
 							// Put something on there that doesn't belong
 							if(curPizzaBehavior.toppings[i].activeInHierarchy && !orderedToppings[i])
 							{
+								if(gameMode == 0)
 								score -= 2;
 								if(!wrongToppings)
 								{
@@ -94,6 +129,7 @@ public class GameBehavior : MonoBehaviour
 							// Forgot something
 							else
 							{
+								if(gameMode == 0)
 								score -= 1;
 								if(!forgotToppings)
 								{
@@ -105,29 +141,60 @@ public class GameBehavior : MonoBehaviour
 					}
 					if(!messedUp)
 					{
-						score += (int)levelPizzaTime[level];
-						if((int)orderTime <= 0.0f)
+						if(gameMode == 0)
 						{
-							mistakeText.text += "Too Slow!";
-						}
-						else if ((int)orderTime < levelPizzaTime[level] / 3.0f)
-						{
-							mistakeText.text += "Good!";
-						}
-						else if ((int)orderTime < (2.0f * levelPizzaTime[level]) / 3.0f)
-						{
-							mistakeText.text += "Great!";
+							score += (int)levelPizzaTime[level];
 						}
 						else
 						{
-							mistakeText.text += "Incredible!";
+							score += 20;
+						}
+
+						if((int)orderTime <= 0.0f)
+						{
+							mistakeText.text += "Too Slow!";
+							if(gameMode == 1)
+							{
+								score -= 20;
+							}
+						}
+
+						else if(gameMode == 0)
+						{
+							if ((int)orderTime < levelPizzaTime[level] / 3.0f)
+							{
+								mistakeText.text += "Good!";
+							}
+							else if ((int)orderTime < (2.0f * levelPizzaTime[level]) / 3.0f)
+							{
+								mistakeText.text += "Great!";
+							}
+							else
+							{
+								mistakeText.text += "Incredible!";
+							}
+						}
+						else
+						{
+							if ((int)orderTime < pizzaTime / 3.0f)
+							{
+								mistakeText.text += "Good!";
+							}
+							else if ((int)orderTime < (2.0f * pizzaTime) / 3.0f)
+							{
+								mistakeText.text += "Great!";
+							}
+							else
+							{
+								mistakeText.text += "Incredible!";
+							}
 						}
 					}
 
 					score -= (int)(levelPizzaTime[level] - orderTime);
 
 					pizzasServed++;
-					if(pizzasServed >= levelCustomers[level])
+					if(pizzasServed >= levelCustomers[level] && gameMode == 0)
 					{
 						// Level complete! Add a remaining time bonus!
 						level++;
@@ -144,7 +211,15 @@ public class GameBehavior : MonoBehaviour
 					}
 						
 					Destroy(curPizza);
-					orderTime = levelPizzaTime[level];
+
+					if(gameMode == 0)
+					{
+						orderTime = levelPizzaTime[level];
+					}
+					else
+					{
+						orderTime = pizzaTime;
+					}
 
 					for(uint i = 1; i < orderedToppings.Length; i++)
 					{
@@ -182,7 +257,14 @@ public class GameBehavior : MonoBehaviour
 				}
 			}
 				
-			uiText.text = "Score: " + score + " / " + levelScores[level] + "\n";
+			if(gameMode == 0)
+			{
+				uiText.text = "Score: " + score + " / " + levelScores[level] + "\n";
+			}
+			else
+			{
+				uiText.text = "Score: " + score + " / " + minScore + "\n";
+			}
 
 			if(orderTime > 0.0f)
 			{
@@ -193,28 +275,46 @@ public class GameBehavior : MonoBehaviour
 				uiText.text += "Order Time: 0:00\n";
 			}
 
-			customersText.text = "Customers:\n\n" + (levelCustomers[level] - pizzasServed);
+			if(gameMode == 0)
+			{
+				customersText.text = "Customers:\n\n" + (levelCustomers[level] - pizzasServed);
+			}
+			else
+			{
+				customersText.text = "Customers:\n\n" + float.PositiveInfinity;
+			}
 		}
 
 		else if (currentScene.name == "Results" || currentScene.name == "WinGame")
 		{
 			uiText = GameObject.Find("Stats").GetComponent<Text>();
 			uiText.text = "Final Score:\n";
-			uiText.text += score + " / " + levelScores[level - 1] +  "\n";
 
-			if(score < levelScores[level - 1])
+			if(gameMode == 0)
 			{
-				GameObject.Find("Canvas").transform.GetChild(1).GetComponent<Text>().text = "Sorry, your score is too low to proceed.\n";
+				uiText.text += score + " / " + levelScores[level - 1] +  "\n";
 			}
 			else
 			{
-				if(currentScene.name == "Results")
+				uiText.text += score + "\n";
+			}
+
+			if(gameMode == 0)
+			{
+				if(score < levelScores[level - 1])
 				{
-					GameObject.Find("Canvas").transform.GetChild(1).GetComponent<Text>().text = "Ready for the next level?";
+					GameObject.Find("Canvas").transform.GetChild(1).GetComponent<Text>().text = "Sorry, your score is too low to proceed.\n";
 				}
 				else
 				{
-					GameObject.Find("Canvas").transform.GetChild(1).GetComponent<Text>().text = "Congratulations!\nYou beat arcade mode!";
+					if(currentScene.name == "Results")
+					{
+						GameObject.Find("Canvas").transform.GetChild(1).GetComponent<Text>().text = "Ready for the next level?";
+					}
+					else
+					{
+						GameObject.Find("Canvas").transform.GetChild(1).GetComponent<Text>().text = "Congratulations!\nYou win!\nNow try Survival!";
+					}
 				}
 			}
 		}
@@ -278,6 +378,8 @@ public class GameBehavior : MonoBehaviour
 	{
 		gameStarted = false;
 
+		timer = 0.0f;
+
 		for(uint i = 1; i < orderedToppings.Length; i++)
 		{
 			orderedToppings[i] = (Random.Range(0, 2) == 1) && levelToppings[level][i];
@@ -285,31 +387,55 @@ public class GameBehavior : MonoBehaviour
 			{
 				orderedToppings[i] = !orderedToppings[i];
 			}
-		}
+		}	
 		orderedToppings[0] = true;
 
 		score = 0;
 		orderTime = levelPizzaTime[level];
+		pizzaTime = levelPizzaTime[level];
 		pizzasServed = 0;
+
+		if(gameMode == 1)
+		{
+			minScore = 0;
+		}
 
 		uiText = GameObject.Find("Canvas").transform.GetChild(0).transform.GetChild(0).GetComponent<Text>();
 		mistakeText = GameObject.Find("Canvas").transform.GetChild(1).transform.GetChild(0).GetComponent<Text>();
 		customersText = GameObject.Find("Canvas").transform.GetChild(2).transform.GetChild(0).GetComponent<Text>();
 
-		uiText.text = "Score: " + score + " / " + levelScores[level] + "\n";
+		if(gameMode == 0)
+		{
+			uiText.text = "Score: " + score + " / " + levelScores[level] + "\n";
+		}
+		else
+		{
+			uiText.text = "Score: " + score + " / " + minScore + "\n";
+		}
+
 		uiText.text += "Order Time: " + string.Format("{0}:{1:00}", (int)orderTime / 60, (int)orderTime % 60) + "\n";
 
 		mistakeText.text = "Press Up Arrow to start!";
 
-		customersText.text = "Customers:\n\n" + levelCustomers[level];
-
-		if(level < 1)
+		if(gameMode == 0)
 		{
-			GameObject.Find("Level 2").SetActive(false);
+			customersText.text = "Customers:\n\n" + levelCustomers[level];
 		}
-		if (level < 2)
+		else
 		{
-			GameObject.Find("Level 3").SetActive(false);
+			customersText.text = "Customers:\n\n" + float.PositiveInfinity;
+		}
+
+		if(gameMode == 0)
+		{
+			if(level < 1)
+			{
+				GameObject.Find("Level 2").SetActive(false);
+			}
+			if (level < 2)
+			{
+				GameObject.Find("Level 3").SetActive(false);
+			}
 		}
 
 		curPizza = Instantiate(pizzaPF);
