@@ -23,6 +23,8 @@ public class BeginGame : MonoBehaviour
 
 	void ToGame()
 	{
+		GetComponent<AudioSource>().Play();
+
 		if(gameObject.name == "Beginner")
 		{
 			GameObject.Find("Game Manager").GetComponent<GameBehavior>().gameMode = 0;
@@ -36,5 +38,7 @@ public class BeginGame : MonoBehaviour
 
 			SceneManager.sceneLoaded += GameObject.Find("Game Manager").GetComponent<GameBehavior>().init;
 		}
+
+		GameObject.Find("Game Manager").GetComponent<GameBehavior>().level = 0;
 	}
 }

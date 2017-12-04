@@ -19,6 +19,9 @@ public class PizzaBehavior : MonoBehaviour
 	public Rigidbody2D pizzaRB;
 	private CircleCollider2D pizzaCol;
 
+	public AudioClip[] sfx;
+	private AudioSource sfxSource;
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -47,6 +50,8 @@ public class PizzaBehavior : MonoBehaviour
 
 		transform.position = new Vector3(0.0f, -2.5f, 0.0f);
 		transform.rotation = Quaternion.identity;
+
+		sfxSource = GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -56,12 +61,18 @@ public class PizzaBehavior : MonoBehaviour
 		{
 			isSliding = true;
 
+			sfxSource.clip = sfx[3];
+			sfxSource.Play();
+
 			pizzaRB.AddForce(new Vector2(1000.0f, 0.0f));
 			pizzaRB.AddTorque(-50.0f);
 		}
 		else if(Input.GetKeyDown(KeyCode.LeftArrow) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
 		{
 			isSliding = true;
+
+			sfxSource.clip = sfx[3];
+			sfxSource.Play();
 
 			pizzaRB.AddForce(new Vector2(-1000.0f, 0.0f));
 			pizzaRB.AddTorque(50.0f);
@@ -71,48 +82,72 @@ public class PizzaBehavior : MonoBehaviour
 		if(Input.GetKeyDown(KeyCode.UpArrow) && !isSliding)
 		{
 			toppings[(int)TOPPINGS.CRUST].SetActive(true);
+
+			sfxSource.clip = sfx[0];
+			sfxSource.Play();
 		}
 
 		// Sauce
 		if(Input.GetKeyDown(KeyCode.Alpha1) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
 		{
 			toppings[(int)TOPPINGS.SAUCE].SetActive(true);
+
+			sfxSource.clip = sfx[1];
+			sfxSource.Play();
 		}
 
 		// Cheese
 		if(Input.GetKeyDown(KeyCode.Alpha2) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
 		{
 			toppings[(int)TOPPINGS.CHEESE].SetActive(true);
+
+			sfxSource.clip = sfx[2];
+			sfxSource.Play();
 		}
 
 		// Pepperoni
 		if(Input.GetKeyDown(KeyCode.Alpha3) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy)
 		{
 			toppings[(int)TOPPINGS.PEPPERONI].SetActive(true);
+
+			sfxSource.clip = sfx[2];
+			sfxSource.Play();
 		}
 
 		// Anchovies
 		if(Input.GetKeyDown(KeyCode.Alpha4) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy && availableToppings[(int)TOPPINGS.ANCHOVIES])
 		{
 			toppings[(int)TOPPINGS.ANCHOVIES].SetActive(true);
+
+			sfxSource.clip = sfx[2];
+			sfxSource.Play();
 		}
 
 		// Mushrooms
 		if(Input.GetKeyDown(KeyCode.Alpha5) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy && availableToppings[(int)TOPPINGS.MUSHROOMS])
 		{
 			toppings[(int)TOPPINGS.MUSHROOMS].SetActive(true);
+
+			sfxSource.clip = sfx[2];
+			sfxSource.Play();
 		}
 
 		// Peppers
 		if(Input.GetKeyDown(KeyCode.Alpha6) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy && availableToppings[(int)TOPPINGS.PEPPERS])
 		{
 			toppings[(int)TOPPINGS.PEPPERS].SetActive(true);
+
+			sfxSource.clip = sfx[2];
+			sfxSource.Play();
 		}
 
 		// Onions
 		if(Input.GetKeyDown(KeyCode.Alpha7) && !isSliding && toppings[(int)TOPPINGS.CRUST].activeInHierarchy && availableToppings[(int)TOPPINGS.ONIONS])
 		{
 			toppings[(int)TOPPINGS.ONIONS].SetActive(true);
+
+			sfxSource.clip = sfx[2];
+			sfxSource.Play();
 		}
 	}
 }

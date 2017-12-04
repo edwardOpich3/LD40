@@ -23,11 +23,8 @@ public class ToMainMenu : MonoBehaviour
 
 	void Back()
 	{
-		GameObject myObject = GameObject.Find("Game Manager");
-		if(myObject)
-		{
-			Destroy(myObject);
-		}
+		GetComponent<AudioSource>().Play();
+
 		SceneManager.LoadScene("Main Menu");
 	}
 }

@@ -23,6 +23,8 @@ public class ToModeSelect : MonoBehaviour
 
 	void Navigate()
 	{
+		GetComponent<AudioSource>().Play();
+
 		SceneManager.LoadScene("ModeSelect");
 	}
 }

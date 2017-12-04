@@ -22,6 +22,8 @@ public class QuitGame : MonoBehaviour
 
 	void ExitGame()
 	{
+		GetComponent<AudioSource>().Play();
+
 		Application.Quit();
 	}
 }

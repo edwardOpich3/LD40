@@ -39,9 +39,16 @@ public class GameBehavior : MonoBehaviour
 
 	private GameObject curOrder;
 
+	private AudioSource ostSource;
+
 	// Use this for initialization
 	void Start ()
 	{
+		if(GameObject.Find("Game Manager") != gameObject)
+		{
+			Destroy(gameObject);
+		}
+
 		// Here's where you define the toppings that are available for each level!
 		levelToppings = new bool[][] { new bool[8], new bool[8], new bool[8], new bool[8] };
 		levelToppings[0] = new bool[8] { false, false, false, true, false, false, false, false };
@@ -54,6 +61,9 @@ public class GameBehavior : MonoBehaviour
 		level = 0;
 
 		orderedToppings = new bool[8];
+
+		ostSource = GetComponent<AudioSource>();
+		ostSource.Play();
 	}
 
 	// Update is called once per frame
@@ -191,7 +201,10 @@ public class GameBehavior : MonoBehaviour
 						}
 					}
 
-					score -= (int)(levelPizzaTime[level] - orderTime);
+					if(gameMode == 0)
+					{
+						score -= (int)(levelPizzaTime[level] - orderTime);
+					}
 
 					pizzasServed++;
 					if(pizzasServed >= levelCustomers[level] && gameMode == 0)

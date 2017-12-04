@@ -23,6 +23,8 @@ public class NextLevel : MonoBehaviour
 
 	void Navigate()
 	{
+		GetComponent<AudioSource>().Play();
+
 		SceneManager.LoadScene("Gameplay");
 
 		SceneManager.sceneLoaded += GameObject.Find("Game Manager").GetComponent<GameBehavior>().init;

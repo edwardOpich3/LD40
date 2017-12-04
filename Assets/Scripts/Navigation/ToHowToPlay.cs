@@ -23,6 +23,8 @@ public class ToHowToPlay : MonoBehaviour
 
 	void HowToPlay()
 	{
+		GetComponent<AudioSource>().Play();
+
 		SceneManager.LoadScene("How to Play");
 	}
 }

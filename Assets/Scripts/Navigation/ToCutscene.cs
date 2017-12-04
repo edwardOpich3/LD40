@@ -23,6 +23,8 @@ public class ToCutscene : MonoBehaviour
 
 	void Navigation()
 	{
+		GetComponent<AudioSource>().Play();
+
 		SceneManager.LoadScene("Cutscene");
 	}
 }
